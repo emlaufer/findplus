@@ -10,12 +10,11 @@ var element = document.createElement("SearchElement");
 element.setAttribute("attribute1", "foobar");
 document.documentElement.appendChild(element);
 
-var evt = document.createEvent("Events");
-evt.initEvent("SearchEvent", true, false);
-element.dispatchEvent(evt);
 
 
 $(".searchinput").keydown(function(e) {
-    console.log($(".searchinput").val());
-    
+    var query = $(".searchinput").val();
+    var evt = document.createEvent("Events");
+    evt.initEvent("SearchEvent", true, false);
+    element.dispatchEvent(evt);
 });
