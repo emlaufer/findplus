@@ -1,5 +1,5 @@
 // Get all visible text in webpage.
-var doc = ""
+var doc = "";
 document.querySelectorAll('body *').forEach(function(node) {
     if(node.localName != "script" && node.localName != "style") {
         doc += extractText(node).trim();
@@ -18,8 +18,6 @@ function queryChange(query) {
     var doc = nlp(query);
     console.log(doc.nouns().toPlural().out('text'));
 }
-exportFunction(queryChange, window, {defineAs: 'queryChange'});
-
 
 // Ctrl-F event listener.
 window.addEventListener("keydown", function(e) {
@@ -27,10 +25,6 @@ window.addEventListener("keydown", function(e) {
 
     if (key == 70 && (e.ctrlKey || e.metaKey)) {
         e.preventDefault();
-        url = browser.extension.getURL("searchbar.html");
-        frame = $("body").append("<iframe src=" + url + " style='position: fixed; bottom: 0; left: 0; z-index: 2139999999; width: 100%; height: 3em' frameborder=0></iframe>");
-
+        var query = prompt("Find: ");
     }
 });
-
-

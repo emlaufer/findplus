@@ -8,5 +8,9 @@ window.addEventListener("keydown", function(e) {
 
 $(".searchinput").keydown(function(e) {
     var query = $(".searchinput").val();
-    queryChange(query);
+    browser.tabs.sendMessage(tabs[0].id, {
+        content: query
+    });
+    console.log( "searchbar sent message: " + query );
 });
+
