@@ -19,10 +19,11 @@ window.addEventListener("keydown", function(e) {
 
     if (key == 70 && (e.ctrlKey || e.metaKey)) {
         e.preventDefault();
-        console.log(doc);
+        //console.log(doc);
+        url = browser.extension.getURL("searchbar.html");
+        frame = $("body").append("<iframe src=" + url + " style='position: fixed; bottom: 0; left: 0; z-index: 2139999999; width: 100%; height: 3em' frameborder=0></iframe>");
+
     }
 });
 
-url = browser.extension.getURL("searchbar.html");
-frame = $("body").append("<iframe src=" + url + " style='position: fixed; bottom: 0; left: 0; z-index: 2139999999; width: 100%; height: 3em' frameborder=0></iframe>");
 
