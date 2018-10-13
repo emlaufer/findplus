@@ -6,3 +6,5 @@ window.addEventListener("keydown", function(e) {
         console.log("hi")
     }
 });
+
+$("body").append("text");

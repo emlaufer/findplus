@@ -15,8 +15,4 @@
             "js": ["findplus.js", "js/jquery-3.1.1.js"]
         }
     ],
-
-    "background": {
-        "scripts": ["background-test.js", "js/compromise.js"]
-    }
 }
