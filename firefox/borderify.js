@@ -1,4 +1,3 @@
-document.body.style.border = "5px solid red";
 window.onkeydown = function(e) {
     var key = e.keyCode ? e.keyCode : e.which;
 
