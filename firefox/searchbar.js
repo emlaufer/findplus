@@ -8,7 +8,5 @@ window.addEventListener("keydown", function(e) {
 
 $(".searchinput").keydown(function(e) {
     var query = $(".searchinput").val();
-    var doc = nlp(query);
-    var str = doc.nouns().toPlural().out('text');
-    console.log(str);
+    queryChange(query);
 });
