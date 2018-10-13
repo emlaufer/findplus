@@ -14,5 +14,12 @@
             "matches": ["<all_urls>"],
             "js": ["js/jquery-3.1.1.js", "findplus.js"]
         }
-    ]
+    ],
+
+	"background": [
+		{
+			"nlp": ["js/compromise.js"]
+		}
+	]
 }
+	
