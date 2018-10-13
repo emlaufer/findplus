@@ -16,10 +16,8 @@
         }
     ],
 
-	"background": [
-		{
-			"nlp": ["js/compromise.js"]
-		}
-	]
+    "background": {
+        "scripts": ["js/compromise.js"]
+    }
 }
 	
