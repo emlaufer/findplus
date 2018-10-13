@@ -5,3 +5,7 @@ window.addEventListener("keydown", function(e) {
         e.preventDefault();
     }
 });
+
+$(".searchinput").keydown(function(e) {
+    console.log($(".searchinput").val());
+});

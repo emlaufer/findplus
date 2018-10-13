@@ -26,13 +26,13 @@ input.searchinput {
     padding: 0px 0px 0px 0px;
     border: 0px;
     height: 100%;
-    width: 20%;
+    width: 200px;
     /*height: 1em !important;*/
 }
 
 input.searchbutton {
     height: 100%;
-    width: 10%;
+    width: 50px;
     border: 0px;
     padding: 0px 0px 0px 0px;
 }
