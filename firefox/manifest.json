@@ -14,5 +14,18 @@
             "matches": ["*://*.mozilla.org/*"],
             "js": ["borderify.js"]
         }
-    ]
+    ],
+
+    "background": {
+        "scripts": ["background-test.js"]
+    },
+
+    "commands": {
+        "search-test": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+F"
+            },
+            "description": "Do a search"
+        }
+    }
 }
