@@ -11,3 +11,7 @@ function performMark(words, options) {
     });
 }
 
+/*function nextWord() {
+    
+}*/
+
