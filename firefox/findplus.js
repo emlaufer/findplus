@@ -142,8 +142,11 @@ window.addEventListener("keydown", function(e) {
         }
         $(".searchinput").focus();
     } else if (key == 13 && $(".searchinput").is(":focus")) {
-        nextMark();
+        if (e.shiftKey) {
+            prevMark();
+        } else {
+            nextMark();
+        }
     }
-
 });
 
