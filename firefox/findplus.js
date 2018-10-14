@@ -55,5 +55,10 @@ window.addEventListener("keydown", function(e) {
     if (key == 70 && (e.ctrlKey || e.metaKey)) {
         e.preventDefault();
         $("#searchbardiv").toggle();
+
+        if (window.getSelection) {
+            $(".searchinput").val(window.getSelection().toString());
+        }
+        $(".searchinput").focus();
     }
 });
