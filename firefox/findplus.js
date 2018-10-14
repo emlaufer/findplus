@@ -66,15 +66,50 @@ function conjugate( word ) {
 // append the searchbar div into the page
 var $div = $("<div>", {id: "searchbardiv"});
 $("body").append($div);
+
+
+var currentWorker;
+
+const nlpWorkerUrl = browser.extension.getURL("nlpWorker.js");
+
 url = browser.extension.getURL("searchbar.html");
-$("#searchbardiv").load(url, function() {
+/*$("#searchbardiv").load(url, function() {
     $(".searchinput").keyup(function(e) {
         var query = $(".searchinput").val();
         words = queryChange(query);
         console.log(relatedWords);
         performMark(relatedWords);
+*/
+$("#searchbardiv").load(url, function() {    
+
+    $(".searchinput").keyup(function(e) {
+        var query = $(".searchinput").val();
+
+        /*if (currentWorker) {
+            currentWorker.terminate();
+        }*/
+
+        console.log("Starting query " + query);
+
+        currentQuery = query;
+        
+        worker = new Worker(nlpWorkerUrl);
+        currentWorker = worker;
+        worker.postMessage([query]);
+
+        worker.onmessage = function (msg) {
+            var fuzzedArray = msg.data;
+
+            console.log(fuzzedArray);
+            performMark(fuzzedArray);
+            console.log("Marked");
+        };
+
+>>>>>>> max-dev
     });
 });
+
+
 $("#searchbardiv").hide();
 
 // Ctrl-F event listener.
