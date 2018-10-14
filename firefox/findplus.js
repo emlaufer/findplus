@@ -16,7 +16,7 @@ function extractText(element) {
 // Callback for query change.
 function queryChange(query) {
     var doc = nlp(query);
-    console.log(doc.nouns().toPlural().out('text'));
+    return doc.nouns().toPlural().out('text');
 }
 
 // append the searchbar div into the page
@@ -26,9 +26,12 @@ url = browser.extension.getURL("searchbar.html");
 $("#searchbardiv").load(url, function() {    
     $(".searchinput").keyup(function(e) {
         var query = $(".searchinput").val();
-        queryChange(query);
+        words = [queryChange(query), query];
+        console.log(words);
+        performMark(words);
     });
 });
+$("#searchbardiv").hide();
 
 // Ctrl-F event listener.
 window.addEventListener("keydown", function(e) {
