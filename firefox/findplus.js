@@ -18,13 +18,17 @@ function queryChange(query) {
     var doc = nlp(query);
     console.log(doc.nouns().toPlural().out('text'));
 }
-exportFunction(queryChange, window, {defineAs: 'queryChange'});
 
+// append the searchbar div into the page
 var $div = $("<div>", {id: "searchbardiv"});
 $("body").append($div);
 url = browser.extension.getURL("searchbar.html");
-$("#searchbardiv").load(url).hide();
-
+$("#searchbardiv").load(url, function() {    
+    $(".searchinput").keyup(function(e) {
+        var query = $(".searchinput").val();
+        queryChange(query);
+    });
+});
 
 // Ctrl-F event listener.
 window.addEventListener("keydown", function(e) {
@@ -35,5 +39,6 @@ window.addEventListener("keydown", function(e) {
         $("#searchbardiv").toggle();
     }
 });
+
 
 
