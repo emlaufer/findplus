@@ -4,8 +4,7 @@ var offsetTop = 50;
 currentClass = "current";
 
 // Get all visible text in webpage.
-var doc = "";
-var relatedWords = [];
+/*var doc = "";
 document.querySelectorAll('body *').forEach(function(node) {
     if(node.localName != "script" && node.localName != "style") {
         doc += extractText(node).trim();
@@ -17,7 +16,13 @@ function extractText(element) {
     var text;
     text = $(element).clone().find("script,style").remove().end().text();
     return text;
-}
+}*/
+const NOUN = "Noun";
+const VERB = "Verb";
+const ADVERB = "Adverb";
+const ADJ = "Adjective";
+const NVAL = "NumericValue";
+const OTHER = "Other";
 
 const dict = "https://api.datamuse.com/words?rel_trg=WORD";
 
@@ -106,6 +111,44 @@ function jumpToMark() {
             window.scrollTo(0, position);
         }
     }
+
+function tagPartsOfSpeech( query ) {
+    var resultDict = {};
+    
+    var pos = nlp(query).out('tags');
+    for(var i = 0; i < pos.length; i++) {
+        var tags = pos[i].tags;
+        // Prioritize tag as noun.
+        if(tags.includes(NOUN)) {
+           resultDict[pos[i].normal] = NOUN; 
+        }
+
+        // Prioritize tag as verb.
+        else if(tags.includes(VERB)) {
+            resultDict[pos[i].normal] = VERB;
+        }
+
+        // Prioritize tag as adverb.
+        else if(tags.includes(ADVERB)) {
+            resultDict[pos[i].normal] = ADVERB;
+        }
+
+        // Prioritize tag as adjective.
+        else if(tags.includes(ADJ)) {
+            resultDict[pos[i].normal] = ADJ;
+        }
+        
+        // Prioritize tag as numeric value.
+        else if(tags.includes(NVAL)) {
+            resultDict[pos[i].normal] = NVAL;
+        }
+
+        // Other.
+        else {
+            resultDict[pos[i].normal] = OTHER;
+        }
+    }
+    return resultDict;
 }
 
 // append the searchbar div into the page
@@ -115,6 +158,9 @@ var url = browser.extension.getURL("searchbar.html");
 $("#searchbardiv").load(url, function() {    
     $(".searchinput").keyup(function(e) {
         var query = $(".searchinput").val();
+        var searchList = [query];
+        var pos = tagPartsOfSpeech(query);
+        console.log(pos);
         words = queryChange(query);
         console.log(relatedWords);
         performMark(relatedWords);
