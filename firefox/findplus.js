@@ -1,5 +1,6 @@
 // Get all visible text in webpage.
 var doc = "";
+var relatedWords = [];
 document.querySelectorAll('body *').forEach(function(node) {
     if(node.localName != "script" && node.localName != "style") {
         doc += extractText(node).trim();
@@ -13,17 +14,33 @@ function extractText(element) {
     return text;
 }
 
+const dict = "https://api.datamuse.com/words?rel_trg=WORD";
+
+// returns an array of word synonyms
+function getSynonyms( word ) {
+   var wordUrl = dict.replace( "WORD", word );
+
+   // get related words
+   $.getJSON( wordUrl, function(e) {
+        for( var i = 0; i < Math.min(e.length, 10); i++ ) {
+            relatedWords.push(e[i].word);
+        }
+   });
+
+}
+
 // Callback for query change.
 function queryChange(query) {
 
     // create array of related words
-    var relatedWords = [];
-    relatedWords += query;
+    relatedWords = [];
 
-    // separate the words by POS
+    getSynonyms( query );
 
-    relatedWords += pluralize( query ); // TODO for noun synonyms ONLY
-    relatedWords += conjugate( query ); // TODO for verbs ONLY
+    relatedWords.push(query);
+
+    relatedWords.push(pluralize( query )); // TODO for noun synonyms ONLY
+    relatedWords.concat(conjugate( query )); // TODO for verbs ONLY
 
     return relatedWords;
 }
@@ -33,7 +50,7 @@ function pluralize( word ) {
 }
 
 // returns an array of conjugated verbs
-function findVerbs( word ) {
+function conjugate( word ) {
 
     verbArray = [];
     //make sure word is verb
@@ -53,10 +70,9 @@ url = browser.extension.getURL("searchbar.html");
 $("#searchbardiv").load(url, function() {
     $(".searchinput").keyup(function(e) {
         var query = $(".searchinput").val();
-        getSynonyms(query);
         words = queryChange(query);
-        console.log(words);
-        performMark(words);
+        console.log(relatedWords);
+        performMark(relatedWords);
     });
 });
 $("#searchbardiv").hide();

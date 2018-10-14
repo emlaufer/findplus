@@ -1,21 +1,21 @@
-const Http = new XMLHttpRequest();
-const dict = "https://googledictionaryapi.eu-gb.mybluemix.net/?define=WORD&lang=en";
+const dict = "https://api.datamuse.com/words?ml=WORD";
 
 // returns an array of word synonyms
 function getSynonyms( word ) {
     // get the definition of the word
-    var wordUrl = dict.replace( "WORD", word );
-    console.log( "getSynonyms was called with value " + word );
-    console.log( "Going to "  + wordUrl );
+   var wordUrl = dict.replace( "WORD", word );
 
+   console.log( wordUrl );
 
-    $.getJSON( wordUrl, function(e) {
-            console.log( "Got response");
+   // get synonyms
+   var synArr = [];
+   
+   $.getJSON( wordUrl, function(e) {
+        for( var i = 0; i < Math.min(e.length, 10); i++ ) {
+            synArr.push(e[i].word);
+        }
+   });
 
-            // parse json into object
-            var obj = JSON.parse(r);
+   return synArr;
 
-            console.log( obj.keys() );
-            // find the synonyms
-        });
 }
