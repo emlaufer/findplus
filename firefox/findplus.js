@@ -17,12 +17,13 @@ function extractText(element) {
     text = $(element).clone().find("script,style").remove().end().text();
     return text;
 }*/
+/*
 const NOUN = "Noun";
 const VERB = "Verb";
 const ADVERB = "Adverb";
 const ADJ = "Adjective";
 const NVAL = "NumericValue";
-const OTHER = "Other";
+const OTHER = "Other"; */
 
 const dict = "https://api.datamuse.com/words?ml=WORD";
 
@@ -65,46 +66,6 @@ function conjugate( word, arr ) {
     }
 }
 
-function nextMark() {
-    if ($results.length) {
-        currentMark += 1;
-        if (currentMark < 0) {
-            currentMark = $results.length - 1;
-        }
-        if (currentMark > $results.length - 1) {
-            currentMark = 0;
-        }
-        jumpToMark();
-    }
-}
-
-function prevMark() {
-    if ($results.length) {
-        currentMark -= 1;
-        if (currentMark < 0) {
-            currentMark = $results.length - 1;
-        }
-        if (currentMark > $results.length - 1) {
-            currentMark = 0;
-        }
-        jumpToMark();
-    }
-}
-
-function jumpToMark() {
-    if ($results.length) {
-        var position, 
-            $current = $results.eq(currentMark);
-        console.log($current);
-        $results.removeClass(currentClass);
-        if ($current.length) {
-            $current.addClass(currentClass);
-            position = $current.offset().top - offsetTop;
-            window.scrollTo(0, position);
-        }
-    }
-}
-
 function tagPartsOfSpeech( query ) {
     var resultDict = {};
     
@@ -144,11 +105,61 @@ function tagPartsOfSpeech( query ) {
     return resultDict;
 }
 
+
+function nextMark() {
+    if ($results.length) {
+        currentMark += 1;
+        if (currentMark < 0) {
+            currentMark = $results.length - 1;
+        }
+        if (currentMark > $results.length - 1) {
+            currentMark = 0;
+        }
+        jumpToMark();
+    }
+}
+
+function prevMark() {
+    if ($results.length) {
+        currentMark -= 1;
+        if (currentMark < 0) {
+            currentMark = $results.length - 1;
+        }
+        if (currentMark > $results.length - 1) {
+            currentMark = 0;
+        }
+        jumpToMark();
+    }
+}
+
+function jumpToMark() {
+    if ($results.length) {
+        var position, 
+            $current = $results.eq(currentMark);
+        $results.removeClass(currentClass);
+        if ($current.length) {
+            $current.addClass(currentClass);
+            position = $current.offset().top - offsetTop;
+            $("#searchmatchlabel").text("Matches: " + String(currentMark+1) + "/" + String($results.length));
+            window.scrollTo(0, position);
+        }
+    } else {
+        $("#searchmatchlabel").text("");
+    }
+
+}
+
 // append the searchbar div into the page
 var $div = $("<div>", {id: "searchbardiv"});
 $("body").append($div);
-var url = browser.extension.getURL("searchbar.html");
-$("#searchbardiv").load(url, function() {    
+
+
+var currentWorker;
+
+const nlpWorkerUrl = browser.extension.getURL("nlpWorker.js");
+
+url = browser.extension.getURL("searchbar.html");
+/*$("#searchbardiv").load(url, function() {
     $(".searchinput").keyup(function(e) {
 
         // get user search request, init vars
@@ -157,14 +168,34 @@ $("#searchbardiv").load(url, function() {
 
         // tag by part of speedh
         var pos = tagPartsOfSpeech(query);
-        console.log(pos);
-
-        // find related words
-        queryChange(query, relatedWords);
-        console.log(relatedWords);
-
-        // mark words
+        words = queryChange(query);
         performMark(relatedWords);
+*/
+$("#searchbardiv").load(url, function() {    
+
+    $(".searchinput").keyup(function(e) {
+        var query = $(".searchinput").val();
+
+        /*if (currentWorker) {
+            currentWorker.terminate();
+        }*/
+
+        console.log("Starting query " + query);
+
+        currentQuery = query;
+        
+        worker = new Worker(nlpWorkerUrl);
+        currentWorker = worker;
+        worker.postMessage([query]);
+
+        worker.onmessage = function (msg) {
+            var fuzzedArray = msg.data;
+
+            console.log(fuzzedArray);
+            performMark(fuzzedArray);
+            console.log("Marked");
+        };
+
         $results = $("body").find("mark");
 
         // find words in document
@@ -172,10 +203,26 @@ $("#searchbardiv").load(url, function() {
         jumpToMark();
     });
 
-    $("#nextbutton").on("click", nextMark);
+    $(".searchinput").focusout(function(e) {
+        if ($(".searchinput").val() == "") {
+            $(".searchinput").val("Enter text to search");
+            $(".searchinput").css("color", "#777777");
+        }
+    });
+
+    $(".searchinput").focus(function(e) {
+        $(".searchinput").val("");
+        $(".searchinput").css("color", "#000000");
+    });
+
     
+    var upsvgurl = browser.extension.getURL("up.svg");
+    //$("#nextbutton").attr("src", upsvgurl);
+    $("#nextbutton").on("click", nextMark);
     $("#prevbutton").on("click", prevMark);
 });
+
+
 $("#searchbardiv").hide();
 
 // Ctrl-F event listener.
@@ -184,10 +231,12 @@ window.addEventListener("keydown", function(e) {
 
     if (key == 70 && (e.ctrlKey || e.metaKey)) {
         e.preventDefault();
-        $("#searchbardiv").toggle();
 
-        if (window.getSelection) {
+        if (window.getSelection().toString() != "") {
+            $("#searchbardiv").show();
             $(".searchinput").val(window.getSelection().toString());
+        } else {
+            $("#searchbardiv").toggle();
         }
         $(".searchinput").focus();
     } else if (key == 13 && $(".searchinput").is(":focus")) {

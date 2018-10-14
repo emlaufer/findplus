@@ -13,7 +13,7 @@ div.background {
 
 div.inputcontainer {
     all: initial;
-    display: inline-block !important;
+    display: flex !important;
     position: absolute !important;
     background-color: #FFFFFF !important;
     top: 50% !important;
@@ -24,16 +24,25 @@ div.inputcontainer {
     width: calc(100% - 2px) !important;
 }
 
+div.labelcontainer {
+    white-space:nowrap;
+}
+
+div.interactcontainer {
+    white-space:nowrap;
+    flex: 1;
+}
+
 input.searchinput {
     /*line-height: 12px;*/
     all: initial;
     padding: 5px !important;
     border: 0px !important;
     height: 100% !important;
-    width: 80% !important;
+    width: calc(100% - 120px) !important;
     left: 0% !important;
     background: #FFFFFF !important;
-    font-family: sans-serif !important;
+    font-family: roboto !important;
     font-size: 20px !important;
     -webkit-box-sizing: border-box; 
     -moz-box-sizing: border-box;   
@@ -42,15 +51,25 @@ input.searchinput {
 }
 
 input.searchbutton {
-    height: 100% !important;
-    width: 50px !important;
+    display: inline-block;
+    height: 89% !important;
+    width: 33px !important;
     border: 0px !important;
     top: 45% !important;
+    margin-top: 2px;
     transform: translate(0%, 0%) !important;
     padding: 0px 0px 0px 0px !important;
-    font-family: sans-serif !important;
+    font-family: roboto !important;
     font-size: 20px !important;
+    text-align: center;
     color: #777777;
+    background-color: #F7F7F7;
+    border-radius: 20%;
+    transition: all 0.2s;
+}
+
+input.searchbutton:hover {
+    background-color: #CCCCCC;
 }
 
 #synonymcheck {
@@ -61,13 +80,22 @@ input.searchbutton {
     padding: 10px;
 }
 
-label {
-    font-family: sans-serif !important;
-    font-size: 15px;
+span.searchmatches {
+    font-family: Roboto !important;
+    font-size: 20px;
+    color: #BBBBBB;
+    text-align: center;
     margin-left: 5px;
     margin-right: 10px;
+    float: right;
+    height: 100%;
+
+}
+
+mark {
+    background: #fbff0e;
 }
 
 mark.current {
-    background: orange;
+    background: #5bff0e;
 }
