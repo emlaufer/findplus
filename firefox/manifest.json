@@ -21,12 +21,17 @@
                 "js/mark.min.js",
                 "markwords.js",
                 "findplus.js"
-            ]
+            ],
+            "css": ["searchbar.css"]
         }
     ],
 
     "background": {
         "scripts": []
-    }
+    },
+
+    "permissions": [
+        "activeTab"
+    ]
 }
 	

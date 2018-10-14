@@ -1,6 +1,6 @@
 div.background {
     display: table-cell;
-    background-color: red; 
+    background-color: #f5f5dc;
     position: fixed; 
     z-index: 2139999999; 
     bottom: 0; 

@@ -6,9 +6,15 @@ window.addEventListener("keydown", function(e) {
     }
 });
 
+var element = document.createElement("SearchElement");
+element.setAttribute("attribute1", "foobar");
+document.documentElement.appendChild(element);
+
+
+
 $(".searchinput").keydown(function(e) {
     var query = $(".searchinput").val();
-    var doc = nlp(query);
-    var str = doc.nouns().toPlural().out('text');
-    console.log(str);
+    var evt = document.createEvent("Events");
+    evt.initEvent("SearchEvent", true, false);
+    element.dispatchEvent(evt);
 });

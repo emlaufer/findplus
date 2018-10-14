@@ -13,16 +13,26 @@ function extractText(element) {
     return text;
 }
 
+// Callback for query change.
+function queryChange(query) {
+    var doc = nlp(query);
+    console.log(doc.nouns().toPlural().out('text'));
+}
+exportFunction(queryChange, window, {defineAs: 'queryChange'});
+
+var $div = $("<div>", {id: "searchbardiv"});
+$("body").append($div);
+url = browser.extension.getURL("searchbar.html");
+$("#searchbardiv").load(url).hide();
+
+
 // Ctrl-F event listener.
 window.addEventListener("keydown", function(e) {
     var key = e.keyCode ? e.keyCode : e.which;
 
     if (key == 70 && (e.ctrlKey || e.metaKey)) {
         e.preventDefault();
-        //console.log(doc);
-        url = browser.extension.getURL("searchbar.html");
-        frame = $("body").append("<iframe src=" + url + " style='position: fixed; bottom: 0; left: 0; z-index: 2139999999; width: 100%; height: 3em' frameborder=0></iframe>");
-
+        $("#searchbardiv").toggle();
     }
 });
 
