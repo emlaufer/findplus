@@ -30,7 +30,7 @@ input.searchinput {
     padding: 5px !important;
     border: 0px !important;
     height: 100% !important;
-    width: 100% !important;
+    width: 80% !important;
     left: 0% !important;
     background: #FFFFFF !important;
     font-family: sans-serif !important;
@@ -45,7 +45,12 @@ input.searchbutton {
     height: 100% !important;
     width: 50px !important;
     border: 0px !important;
+    top: 45% !important;
+    transform: translate(0%, 0%) !important;
     padding: 0px 0px 0px 0px !important;
+    font-family: sans-serif !important;
+    font-size: 20px !important;
+    color: #777777;
 }
 
 #synonymcheck {
@@ -61,4 +66,8 @@ label {
     font-size: 15px;
     margin-left: 5px;
     margin-right: 10px;
+}
+
+mark.current {
+    background: orange;
 }
