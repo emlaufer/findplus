@@ -20,12 +20,17 @@
                 "findplus.js",
                 "js/compromise.js",
                 "js/mark.min.js"
-            ]
+            ],
+            "css": ["searchbar.css"]
         }
     ],
 
     "background": {
         "scripts": []
-    }
+    },
+
+    "permissions": [
+        "activeTab"
+    ]
 }
 	
