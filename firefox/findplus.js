@@ -103,14 +103,17 @@ function jumpToMark() {
     if ($results.length) {
         var position, 
             $current = $results.eq(currentMark);
-        console.log($current);
         $results.removeClass(currentClass);
         if ($current.length) {
             $current.addClass(currentClass);
             position = $current.offset().top - offsetTop;
+            $("#searchmatchlabel").text("Matches: " + String(currentMark+1) + "/" + String($results.length));
             window.scrollTo(0, position);
         }
+    } else {
+        $("#searchmatchlabel").text("");
     }
+
 }
 
 function tagPartsOfSpeech( query ) {
@@ -161,17 +164,29 @@ $("#searchbardiv").load(url, function() {
         var query = $(".searchinput").val();
         var searchList = [query];
         var pos = tagPartsOfSpeech(query);
-        console.log(pos);
         words = queryChange(query);
-        console.log(relatedWords);
         performMark(relatedWords);
         $results = $("body").find("mark");
         currentIndex = 0;
         jumpToMark();
     });
 
-    $("#nextbutton").on("click", nextMark);
+    $(".searchinput").focusout(function(e) {
+        if ($(".searchinput").val() == "") {
+            $(".searchinput").val("Enter text to search");
+            $(".searchinput").css("color", "#777777");
+        }
+    });
+
+    $(".searchinput").focus(function(e) {
+        $(".searchinput").val("");
+        $(".searchinput").css("color", "#000000");
+    });
+
     
+    var upsvgurl = browser.extension.getURL("up.svg");
+    //$("#nextbutton").attr("src", upsvgurl);
+    $("#nextbutton").on("click", nextMark);
     $("#prevbutton").on("click", prevMark);
 });
 $("#searchbardiv").hide();
@@ -182,10 +197,12 @@ window.addEventListener("keydown", function(e) {
 
     if (key == 70 && (e.ctrlKey || e.metaKey)) {
         e.preventDefault();
-        $("#searchbardiv").toggle();
 
-        if (window.getSelection) {
+        if (window.getSelection().toString() != "") {
+            $("#searchbardiv").show();
             $(".searchinput").val(window.getSelection().toString());
+        } else {
+            $("#searchbardiv").toggle();
         }
         $(".searchinput").focus();
     } else if (key == 13 && $(".searchinput").is(":focus")) {

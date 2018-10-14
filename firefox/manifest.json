@@ -10,7 +10,9 @@
     },
 
     "web_accessible_resources": [
-        "searchbar.html"
+        "searchbar.html",
+        "up.svg",
+        "down.svg"
     ],
 
     "content_scripts": [
