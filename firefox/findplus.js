@@ -17,6 +17,7 @@ function extractText(element) {
     text = $(element).clone().find("script,style").remove().end().text();
     return text;
 }*/
+/*
 const NOUN = "Noun";
 const VERB = "Verb";
 const ADVERB = "Adverb";
@@ -73,6 +74,47 @@ function conjugate( word ) {
     return verbArray;
 }
 
+function tagPartsOfSpeech( query ) {
+    var resultDict = {};
+    
+    var pos = nlp(query).out('tags');
+    for(var i = 0; i < pos.length; i++) {
+        var tags = pos[i].tags;
+        // Prioritize tag as noun.
+        if(tags.includes(NOUN)) {
+           resultDict[pos[i].normal] = NOUN; 
+        }
+
+        // Prioritize tag as verb.
+        else if(tags.includes(VERB)) {
+            resultDict[pos[i].normal] = VERB;
+        }
+
+        // Prioritize tag as adverb.
+        else if(tags.includes(ADVERB)) {
+            resultDict[pos[i].normal] = ADVERB;
+        }
+
+        // Prioritize tag as adjective.
+        else if(tags.includes(ADJ)) {
+            resultDict[pos[i].normal] = ADJ;
+        }
+        
+        // Prioritize tag as numeric value.
+        else if(tags.includes(NVAL)) {
+            resultDict[pos[i].normal] = NVAL;
+        }
+
+        // Other.
+        else {
+            resultDict[pos[i].normal] = OTHER;
+        }
+    }
+    return resultDict;
+}
+*/
+
+
 function nextMark() {
     if ($results.length) {
         currentMark += 1;
@@ -111,45 +153,6 @@ function jumpToMark() {
             window.scrollTo(0, position);
         }
     }
-}
-
-function tagPartsOfSpeech( query ) {
-    var resultDict = {};
-    
-    var pos = nlp(query).out('tags');
-    for(var i = 0; i < pos.length; i++) {
-        var tags = pos[i].tags;
-        // Prioritize tag as noun.
-        if(tags.includes(NOUN)) {
-           resultDict[pos[i].normal] = NOUN; 
-        }
-
-        // Prioritize tag as verb.
-        else if(tags.includes(VERB)) {
-            resultDict[pos[i].normal] = VERB;
-        }
-
-        // Prioritize tag as adverb.
-        else if(tags.includes(ADVERB)) {
-            resultDict[pos[i].normal] = ADVERB;
-        }
-
-        // Prioritize tag as adjective.
-        else if(tags.includes(ADJ)) {
-            resultDict[pos[i].normal] = ADJ;
-        }
-        
-        // Prioritize tag as numeric value.
-        else if(tags.includes(NVAL)) {
-            resultDict[pos[i].normal] = NVAL;
-        }
-
-        // Other.
-        else {
-            resultDict[pos[i].normal] = OTHER;
-        }
-    }
-    return resultDict;
 }
 
 // append the searchbar div into the page
