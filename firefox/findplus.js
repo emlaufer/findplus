@@ -24,7 +24,7 @@ const ADJ = "Adjective";
 const NVAL = "NumericValue";
 const OTHER = "Other";
 
-const dict = "https://api.datamuse.com/words?rel_trg=WORD";
+const dict = "https://api.datamuse.com/words?ml=WORD";
 
 // returns an array of word synonyms
 function getSynonyms( word ) {
@@ -32,27 +32,22 @@ function getSynonyms( word ) {
 
    // get related words
    $.getJSON( wordUrl, function(e) {
+        arr = [];
         for( var i = 0; i < Math.min(e.length, 10); i++ ) {
-            relatedWords.push(e[i].word);
+            arr.push(e[i].word);
         }
+        performMark(arr);
    });
 
 }
 
 // Callback for query change.
-function queryChange(query) {
-
-    // create array of related words
-    relatedWords = [];
-
-    getSynonyms( query );
+function queryChange(query, relatedWords) {
 
     relatedWords.push(query);
-
+    getSynonyms(query);
     relatedWords.push(pluralize( query )); // TODO for noun synonyms ONLY
-    relatedWords.concat(conjugate( query )); // TODO for verbs ONLY
-
-    return relatedWords;
+    conjugate( query, relatedWords ); // TODO for verbs ONLY
 }
 
 function pluralize( word ) {
@@ -60,17 +55,14 @@ function pluralize( word ) {
 }
 
 // returns an array of conjugated verbs
-function conjugate( word ) {
-
-    verbArray = [];
+function conjugate( word, arr ) {
     //make sure word is verb
     nlpArray = nlp( word ).verbs().conjugate();
-
-    for( var i = 0; i < nlpArray.length; i++ ){
-        verbArray += Object.values( nlpArray[i] );
+    
+    var verbArr = Object.values(nlpArray[0]);
+    for( var i = 0; i < verbArr.length; i++ ){
+        arr.push( verbArr[i] );
     }
-
-    return verbArray;
 }
 
 function nextMark() {
@@ -158,14 +150,24 @@ $("body").append($div);
 var url = browser.extension.getURL("searchbar.html");
 $("#searchbardiv").load(url, function() {    
     $(".searchinput").keyup(function(e) {
+
+        // get user search request, init vars
         var query = $(".searchinput").val();
-        var searchList = [query];
+        var relatedWords = [];
+
+        // tag by part of speedh
         var pos = tagPartsOfSpeech(query);
         console.log(pos);
-        words = queryChange(query);
+
+        // find related words
+        queryChange(query, relatedWords);
         console.log(relatedWords);
+
+        // mark words
         performMark(relatedWords);
         $results = $("body").find("mark");
+
+        // find words in document
         currentIndex = 0;
         jumpToMark();
     });
