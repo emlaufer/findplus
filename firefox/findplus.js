@@ -1,5 +1,5 @@
 // Get all visible text in webpage.
-var doc = ""
+var doc = "";
 document.querySelectorAll('body *').forEach(function(node) {
     if(node.localName != "script" && node.localName != "style") {
         doc += extractText(node).trim();
@@ -17,6 +17,21 @@ function extractText(element) {
 function queryChange(query) {
     var doc = nlp(query);
     return doc.nouns().toPlural().out('text');
+}
+
+// returns an array of conjugated verbs
+function findVerbs( word ) {
+
+    verbArray = [];
+    //make sure word is verb
+    nlpArray = nlp( word ).verbs().conjugate();
+
+    for( var i = 0; i < nlpArray.length; i++ ){
+        verbArray += Object.values( nlpArray[i] );
+        console.log( Object.values( nlpArray[i] ) );
+    }
+
+    return verbArray;
 }
 
 // append the searchbar div into the page
@@ -42,6 +57,3 @@ window.addEventListener("keydown", function(e) {
         $("#searchbardiv").toggle();
     }
 });
-
-
-
