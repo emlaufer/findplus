@@ -1,5 +1,5 @@
 // Get all visible text in webpage.
-var doc = ""
+var doc = "";
 document.querySelectorAll('body *').forEach(function(node) {
     if(node.localName != "script" && node.localName != "style") {
         doc += extractText(node).trim();
@@ -13,12 +13,20 @@ function extractText(element) {
     return text;
 }
 
-// Callback for query change.
-function queryChange(query) {
-    var doc = nlp(query);
-    console.log(doc.nouns().toPlural().out('text'));
+// returns an array of conjugated verbs
+function findVerbs( word ) {
+
+    verbArray = [];
+    //make sure word is verb
+    nlpArray = nlp( word ).verbs().conjugate();
+
+    for( var i = 0; i < nlpArray.length; i++ ){
+        verbArray += Object.values( nlpArray[i] );
+        console.log( Object.values( nlpArray[i] ) );
+    }
+
+    return verbArray;
 }
-exportFunction(queryChange, window, {defineAs: 'queryChange'});
 
 var $div = $("<div>", {id: "searchbardiv"});
 $("body").append($div);
@@ -35,5 +43,3 @@ window.addEventListener("keydown", function(e) {
         $("#searchbardiv").toggle();
     }
 });
-
-

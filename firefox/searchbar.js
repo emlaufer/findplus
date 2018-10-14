@@ -18,3 +18,4 @@ $(".searchinput").keydown(function(e) {
     evt.initEvent("SearchEvent", true, false);
     element.dispatchEvent(evt);
 });
+
