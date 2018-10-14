@@ -1,15 +1,13 @@
 
-var markInstance = new Mark(document.querySelector(".body"));
+var markInstance = new Mark(document.querySelector("body"));
 
 
-function performMark(words, synonyms) {
+function performMark(words, options) {
+    console.log("Marked");
     markInstance.unmark({
         "done": function() {
-            markInstance.mark(words, {
-                "synonyms": {
-                    "Lorem": "ipsum"
-                }
-            });
+            markInstance.mark(words, options);
         }
     });
 }
+
