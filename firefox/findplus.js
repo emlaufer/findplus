@@ -111,6 +111,7 @@ function jumpToMark() {
             window.scrollTo(0, position);
         }
     }
+}
 
 function tagPartsOfSpeech( query ) {
     var resultDict = {};
