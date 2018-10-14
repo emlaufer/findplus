@@ -5,6 +5,7 @@ currentClass = "current";
 
 // Get all visible text in webpage.
 var doc = "";
+var relatedWords = [];
 document.querySelectorAll('body *').forEach(function(node) {
     if(node.localName != "script" && node.localName != "style") {
         doc += extractText(node).trim();
@@ -18,14 +19,43 @@ function extractText(element) {
     return text;
 }
 
+const dict = "https://api.datamuse.com/words?rel_trg=WORD";
+
+// returns an array of word synonyms
+function getSynonyms( word ) {
+   var wordUrl = dict.replace( "WORD", word );
+
+   // get related words
+   $.getJSON( wordUrl, function(e) {
+        for( var i = 0; i < Math.min(e.length, 10); i++ ) {
+            relatedWords.push(e[i].word);
+        }
+   });
+
+}
+
 // Callback for query change.
 function queryChange(query) {
-    var doc = nlp(query);
-    return doc.nouns().toPlural().out('text');
+
+    // create array of related words
+    relatedWords = [];
+
+    getSynonyms( query );
+
+    relatedWords.push(query);
+
+    relatedWords.push(pluralize( query )); // TODO for noun synonyms ONLY
+    relatedWords.concat(conjugate( query )); // TODO for verbs ONLY
+
+    return relatedWords;
+}
+
+function pluralize( word ) {
+    return nlp(word).nouns().toPlural().out('text');
 }
 
 // returns an array of conjugated verbs
-function findVerbs( word ) {
+function conjugate( word ) {
 
     verbArray = [];
     //make sure word is verb
@@ -33,7 +63,6 @@ function findVerbs( word ) {
 
     for( var i = 0; i < nlpArray.length; i++ ){
         verbArray += Object.values( nlpArray[i] );
-        console.log( Object.values( nlpArray[i] ) );
     }
 
     return verbArray;
@@ -62,9 +91,9 @@ var url = browser.extension.getURL("searchbar.html");
 $("#searchbardiv").load(url, function() {    
     $(".searchinput").keyup(function(e) {
         var query = $(".searchinput").val();
-        var words = [queryChange(query), query];
-        console.log(words);
-        performMark(words);
+        words = queryChange(query);
+        console.log(relatedWords);
+        performMark(relatedWords);
         $results = $("body").find("mark");
         currentIndex = 0;
         jumpToMark();

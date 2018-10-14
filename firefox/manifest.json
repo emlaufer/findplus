@@ -32,7 +32,8 @@
     },
 
     "permissions": [
-        "activeTab"
+        "activeTab",
+        "https://api.datamuse.com/*"
     ]
 }
 	
