@@ -1,3 +1,8 @@
+var $marks;
+var currentMark = 0;
+var offsetTop = 50;
+currentClass = "current";
+
 // Get all visible text in webpage.
 var doc = "";
 document.querySelectorAll('body *').forEach(function(node) {
@@ -34,16 +39,63 @@ function findVerbs( word ) {
     return verbArray;
 }
 
+function jumpToMark() {
+    console.log("scrolling");
+    if ($results.length) {
+        var position, 
+            $current = $results.eq(currentMark);
+        console.log($current);
+        $results.removeClass(currentClass);
+        if ($current.length) {
+            $current.addClass(currentClass);
+            position = $current.offset().top - offsetTop;
+            console.log("GOING TO:" + position);
+            window.scrollTo(0, position);
+        }
+    }
+}
+
 // append the searchbar div into the page
 var $div = $("<div>", {id: "searchbardiv"});
 $("body").append($div);
-url = browser.extension.getURL("searchbar.html");
+var url = browser.extension.getURL("searchbar.html");
 $("#searchbardiv").load(url, function() {    
     $(".searchinput").keyup(function(e) {
         var query = $(".searchinput").val();
-        words = [queryChange(query), query];
+        var words = [queryChange(query), query];
         console.log(words);
         performMark(words);
+        $results = $("body").find("mark");
+        currentIndex = 0;
+        jumpToMark();
+    });
+
+    $("#nextbutton").on("click", function() {
+        if ($results.length) {
+            console.log("next");
+            currentMark += 1;
+            if (currentMark < 0) {
+                currentMark = $results.length - 1;
+            }
+            if (currentMark > $results.length - 1) {
+                currentMark = 0;
+            }
+            jumpToMark();
+        }
+    });
+    
+    $("#prevbutton").on("click", function() {
+        if ($results.length) {
+            console.log("next");
+            currentMark -= 1;
+            if (currentMark < 0) {
+                currentMark = $results.length - 1;
+            }
+            if (currentMark > $results.length - 1) {
+                currentMark = 0;
+            }
+            jumpToMark();
+        }
     });
 });
 $("#searchbardiv").hide();
@@ -62,3 +114,4 @@ window.addEventListener("keydown", function(e) {
         $(".searchinput").focus();
     }
 });
+
