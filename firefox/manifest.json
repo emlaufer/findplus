@@ -29,6 +29,10 @@
         }
     ],
 
+    "web_accessible_resources": [
+        "nlpWorker.js"
+    ],
+
     "background": {
         "scripts": []
     },

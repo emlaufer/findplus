@@ -17,6 +17,7 @@ function extractText(element) {
     text = $(element).clone().find("script,style").remove().end().text();
     return text;
 }*/
+/*
 const NOUN = "Noun";
 const VERB = "Verb";
 const ADVERB = "Adverb";
@@ -73,6 +74,47 @@ function conjugate( word ) {
     return verbArray;
 }
 
+function tagPartsOfSpeech( query ) {
+    var resultDict = {};
+    
+    var pos = nlp(query).out('tags');
+    for(var i = 0; i < pos.length; i++) {
+        var tags = pos[i].tags;
+        // Prioritize tag as noun.
+        if(tags.includes(NOUN)) {
+           resultDict[pos[i].normal] = NOUN; 
+        }
+
+        // Prioritize tag as verb.
+        else if(tags.includes(VERB)) {
+            resultDict[pos[i].normal] = VERB;
+        }
+
+        // Prioritize tag as adverb.
+        else if(tags.includes(ADVERB)) {
+            resultDict[pos[i].normal] = ADVERB;
+        }
+
+        // Prioritize tag as adjective.
+        else if(tags.includes(ADJ)) {
+            resultDict[pos[i].normal] = ADJ;
+        }
+        
+        // Prioritize tag as numeric value.
+        else if(tags.includes(NVAL)) {
+            resultDict[pos[i].normal] = NVAL;
+        }
+
+        // Other.
+        else {
+            resultDict[pos[i].normal] = OTHER;
+        }
+    }
+    return resultDict;
+}
+*/
+
+
 function nextMark() {
     if ($results.length) {
         currentMark += 1;
@@ -116,56 +158,49 @@ function jumpToMark() {
 
 }
 
-function tagPartsOfSpeech( query ) {
-    var resultDict = {};
-    
-    var pos = nlp(query).out('tags');
-    for(var i = 0; i < pos.length; i++) {
-        var tags = pos[i].tags;
-        // Prioritize tag as noun.
-        if(tags.includes(NOUN)) {
-           resultDict[pos[i].normal] = NOUN; 
-        }
-
-        // Prioritize tag as verb.
-        else if(tags.includes(VERB)) {
-            resultDict[pos[i].normal] = VERB;
-        }
-
-        // Prioritize tag as adverb.
-        else if(tags.includes(ADVERB)) {
-            resultDict[pos[i].normal] = ADVERB;
-        }
-
-        // Prioritize tag as adjective.
-        else if(tags.includes(ADJ)) {
-            resultDict[pos[i].normal] = ADJ;
-        }
-        
-        // Prioritize tag as numeric value.
-        else if(tags.includes(NVAL)) {
-            resultDict[pos[i].normal] = NVAL;
-        }
-
-        // Other.
-        else {
-            resultDict[pos[i].normal] = OTHER;
-        }
-    }
-    return resultDict;
-}
-
 // append the searchbar div into the page
 var $div = $("<div>", {id: "searchbardiv"});
 $("body").append($div);
-var url = browser.extension.getURL("searchbar.html");
-$("#searchbardiv").load(url, function() {    
+
+
+var currentWorker;
+
+const nlpWorkerUrl = browser.extension.getURL("nlpWorker.js");
+
+url = browser.extension.getURL("searchbar.html");
+/*$("#searchbardiv").load(url, function() {
     $(".searchinput").keyup(function(e) {
         var query = $(".searchinput").val();
         var searchList = [query];
         var pos = tagPartsOfSpeech(query);
         words = queryChange(query);
         performMark(relatedWords);
+*/
+$("#searchbardiv").load(url, function() {    
+
+    $(".searchinput").keyup(function(e) {
+        var query = $(".searchinput").val();
+
+        /*if (currentWorker) {
+            currentWorker.terminate();
+        }*/
+
+        console.log("Starting query " + query);
+
+        currentQuery = query;
+        
+        worker = new Worker(nlpWorkerUrl);
+        currentWorker = worker;
+        worker.postMessage([query]);
+
+        worker.onmessage = function (msg) {
+            var fuzzedArray = msg.data;
+
+            console.log(fuzzedArray);
+            performMark(fuzzedArray);
+            console.log("Marked");
+        };
+
         $results = $("body").find("mark");
         currentIndex = 0;
         jumpToMark();
@@ -189,6 +224,8 @@ $("#searchbardiv").load(url, function() {
     $("#nextbutton").on("click", nextMark);
     $("#prevbutton").on("click", prevMark);
 });
+
+
 $("#searchbardiv").hide();
 
 // Ctrl-F event listener.
