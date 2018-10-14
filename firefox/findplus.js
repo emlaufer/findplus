@@ -68,8 +68,33 @@ function conjugate( word ) {
     return verbArray;
 }
 
+function nextMark() {
+    if ($results.length) {
+        currentMark += 1;
+        if (currentMark < 0) {
+            currentMark = $results.length - 1;
+        }
+        if (currentMark > $results.length - 1) {
+            currentMark = 0;
+        }
+        jumpToMark();
+    }
+}
+
+function prevMark() {
+    if ($results.length) {
+        currentMark -= 1;
+        if (currentMark < 0) {
+            currentMark = $results.length - 1;
+        }
+        if (currentMark > $results.length - 1) {
+            currentMark = 0;
+        }
+        jumpToMark();
+    }
+}
+
 function jumpToMark() {
-    console.log("scrolling");
     if ($results.length) {
         var position, 
             $current = $results.eq(currentMark);
@@ -78,7 +103,6 @@ function jumpToMark() {
         if ($current.length) {
             $current.addClass(currentClass);
             position = $current.offset().top - offsetTop;
-            console.log("GOING TO:" + position);
             window.scrollTo(0, position);
         }
     }
@@ -131,33 +155,9 @@ $("#searchbardiv").load(url, function() {
         jumpToMark();
     });
 
-    $("#nextbutton").on("click", function() {
-        if ($results.length) {
-            console.log("next");
-            currentMark += 1;
-            if (currentMark < 0) {
-                currentMark = $results.length - 1;
-            }
-            if (currentMark > $results.length - 1) {
-                currentMark = 0;
-            }
-            jumpToMark();
-        }
-    });
+    $("#nextbutton").on("click", nextMark);
     
-    $("#prevbutton").on("click", function() {
-        if ($results.length) {
-            console.log("next");
-            currentMark -= 1;
-            if (currentMark < 0) {
-                currentMark = $results.length - 1;
-            }
-            if (currentMark > $results.length - 1) {
-                currentMark = 0;
-            }
-            jumpToMark();
-        }
-    });
+    $("#prevbutton").on("click", prevMark);
 });
 
 
@@ -175,6 +175,12 @@ window.addEventListener("keydown", function(e) {
             $(".searchinput").val(window.getSelection().toString());
         }
         $(".searchinput").focus();
+    } else if (key == 13 && $(".searchinput").is(":focus")) {
+        if (e.shiftKey) {
+            prevMark();
+        } else {
+            nextMark();
+        }
     }
 });
 
