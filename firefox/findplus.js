@@ -15,8 +15,21 @@ function extractText(element) {
 
 // Callback for query change.
 function queryChange(query) {
-    var doc = nlp(query);
-    return doc.nouns().toPlural().out('text');
+
+    // create array of related words
+    var relatedWords = [];
+    relatedWords += query;
+
+    // separate the words by POS
+
+    relatedWords += pluralize( query ); // TODO for noun synonyms ONLY
+    relatedWords += conjugate( query ); // TODO for verbs ONLY
+
+    return relatedWords;
+}
+
+function pluralize( word ) {
+    return nlp(word).nouns().toPlural().out('text');
 }
 
 // returns an array of conjugated verbs
@@ -28,7 +41,6 @@ function findVerbs( word ) {
 
     for( var i = 0; i < nlpArray.length; i++ ){
         verbArray += Object.values( nlpArray[i] );
-        console.log( Object.values( nlpArray[i] ) );
     }
 
     return verbArray;
@@ -38,10 +50,11 @@ function findVerbs( word ) {
 var $div = $("<div>", {id: "searchbardiv"});
 $("body").append($div);
 url = browser.extension.getURL("searchbar.html");
-$("#searchbardiv").load(url, function() {    
+$("#searchbardiv").load(url, function() {
     $(".searchinput").keyup(function(e) {
         var query = $(".searchinput").val();
-        words = [queryChange(query), query];
+        getSynonyms(query);
+        words = queryChange(query);
         console.log(words);
         performMark(words);
     });

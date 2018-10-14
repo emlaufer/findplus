@@ -20,6 +20,7 @@
                 "js/compromise.js",
                 "js/mark.min.js",
                 "markwords.js",
+                "define.js",
                 "findplus.js"
             ],
             "css": ["searchbar.css"]
