@@ -13,10 +13,34 @@ function extractText(element) {
     return text;
 }
 
+// returns an array of conjugated verbs
+function findVerbs( word ) {
+
+    verbArray = [];
+    //make sure word is verb
+    nlpArray = nlp( word ).verbs().conjugate();
+
+    for( var i = 0; i < nlpArray.length; i++ ){
+        verbArray += Object.values( nlpArray[i] );
+        console.log( Object.values( nlpArray[i] ) );
+    }
+
+    return verbArray;
+}
+
 // Callback for query change.
-function queryChange(query) {
-    var doc = nlp(query);
-    console.log(doc.nouns().toPlural().out('text'));
+async function queryChange(query) {
+
+    var relatedWords = [];
+    // add phrase
+    relatedWords += query;
+
+    console.log( query );
+
+    // find verbs
+    relatedWords += findVerbs(query);
+
+    console.log(relatedWords);
 }
 
 // Ctrl-F event listener.
@@ -26,5 +50,6 @@ window.addEventListener("keydown", function(e) {
     if (key == 70 && (e.ctrlKey || e.metaKey)) {
         e.preventDefault();
         var query = prompt("Find: ");
+        queryChange( query );
     }
 });
